@@ -1,0 +1,23 @@
+<%= simple_form_for(@property, html: { class: 'form-horizontal' })  do |f| %>
+  <% if @property.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@property.errors.count, "error") %> prohibited this property from being saved:</h2>
+
+      <ul>
+      <% @property.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <%= f.simple_fields_for :location do |l|%>
+  <%= l.input :postcode, label: "Post Code"%>
+  <%end%>
+  <%= f.input :cost%>
+  <%= f.input :currentrent, label: "Current Rent"%>
+  <%= f.submit "Enter", class: "btn btn-success "%>
+
+
+<% end %>
+
+
