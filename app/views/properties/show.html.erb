@@ -1,4 +1,36 @@
-<p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_property_path(@property) %> |
-<%= link_to 'Back', properties_path %>
+<% title("Product Page") %>
+
+<h1 class="text-center">Similar Properties around</h1>
+<%= link_to 'Add New Property', new_property_path, :class =>"btn btn-success btn-block" %></br>
+
+
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Post Town</th>
+      <th>Street Name</th>
+      <th>Bedrooms</th>
+      <th>Price per week</th>
+      <th>Price Per Month</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @properties.each do |property| %>
+      <tr>
+      	<td><%= property["post_town"]%></td>
+		<td><%= property["street_name"]%></td>
+		<td><%= property["num_bedrooms"]%></td>
+      	<td><%= property["rental_prices"]["per_week"]%>£</td>
+      	<td><%= property["rental_prices"]["per_month"]%>£</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+
+

@@ -16,6 +16,10 @@ gem 'gmaps4rails'
 gem 'geocoder'
 gem 'pg'
 gem 'rails_12factor'
+gem 'json'
+gem 'multi_xml'
+gem 'httparty'
+gem 'nokogiri'
 group :doc do
   gem 'sdoc', require: false
 end

@@ -6,12 +6,25 @@ class PropertiesController < ApplicationController
   # GET /properties.json
   def index
 
-    @properties = Property.all
+  @properties = Property.all
+
   end
 
   # GET /properties/1
   # GET /properties/1.json
   def show
+    @property = set_property
+    @p = listings(@property.location.postcode.to_s)
+    puts @p
+    if (@p == 0 || @p["error_string"] == "Unknown location entered.")
+      redirect_to properties_path, notice: 'No properties found'
+      else
+    @properties = @p["listing"]
+    respond_to do |format|
+    format.html
+    format.json{ render :json => @properties }
+       end       
+    end
   end
 
   # GET /properties/new
@@ -65,6 +78,21 @@ class PropertiesController < ApplicationController
   end
 
   private
+  
+    def listings(postcode)
+    @postcode = postcode.downcase.tr(" ", "+")
+    response = HTTParty.get("http://api.zoopla.co.uk/api/v1/property_listings.json?postcode=#{@postcode}&radius=10&listing_status=rent&api_key=xu9atf63rq2rcc9gmmuqunwh")
+    HTTParty.get("http://api.zoopla.co.uk/api/v1/property_listings.json?postcode=C11+c11&radius=10&listing_status=rent&api_key=xu9atf63rq2rcc9gmmuqunwh")
+    case response.code
+      when 200
+       return response.parsed_response
+      when 404
+       return response = 0
+      when 500...600
+        return response = 0
+    end
+    end
+
     def redirect_invalid_profile
     unless current_user.nil?
     redirect_to(new_user_profiles_path(current_user.id)) if invalid_profile?
@@ -74,16 +102,17 @@ class PropertiesController < ApplicationController
   def invalid_profile?
     current_user.try(:profile).try(:firstname).nil?
   end
-  
-  
-  
-    # Use callbacks to share common setup or constraints between actions.
-    def set_property
-      @property = Property.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def property_params
-     params.require(:property).permit(:cost, :currentrent, :location_attributes => [:postcode])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_property
+    @property = Property.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def property_params
+   params.require(:property).permit(:cost, :currentrent, :location_attributes => [:postcode])
+  end
+  
+  
+  
 end
